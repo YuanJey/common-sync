@@ -1,0 +1,17 @@
+wps:
+  addr: http://encs-pri-cams-engine/i/docmini
+  syncAddr: http://encs-pri-cams-engine
+  companyId: 1
+  platformId: 1
+api:
+  admin_key: admin
+log:
+  storageLocation: ./logs/
+  rotationTime: 24
+  remainRotationCount: 2 #日志数量
+  #日志级别 6表示全都打印，测试阶段建议设置为6
+  remainLogLevel: 6
+  elasticSearchSwitch: false
+  elasticSearchAddr: [ 127.0.0.1:9201 ]
+  elasticSearchUser: ""
+  elasticSearchPassword: ""

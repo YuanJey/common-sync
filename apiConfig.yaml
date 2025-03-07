@@ -1,0 +1,15 @@
+- method: GET
+  bodyType: 1
+  url: https://www.baidu.com
+  contentType: application/json
+  headers:
+    Content-Type: application/json
+  req:
+    page: 1
+    size: 1
+  pageConf:
+    isPage: true
+    page: 1
+    pageField: page
+    pageSize: 100
+    sizeField: size

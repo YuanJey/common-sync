@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>部门同步配置</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+<h1>部门同步字段配置</h1>
+
+<form id="deptForm">
+  <label for="did">部门唯一ID:</label><br>
+  <input type="text" id="did" name="did" required><br><br>
+
+  <label for="pid">父部门ID:</label><br>
+  <input type="text" id="pid" name="pid" required><br><br>
+
+  <label for="name">部门名称:</label><br>
+  <input type="text" id="name" name="name" required><br><br>
+
+  <label for="order">排序 (Optional):</label><br>
+  <input type="text" id="order" name="order"><br><br>
+
+  <button type="button" onclick="submitForm()">提交</button>
+</form>
+
+<h2>当前字段映射:</h2>
+<table id="responseTable">
+  <thead>
+  <tr>
+    <th>Third Name</th>
+    <th>DB Name</th>
+  </tr>
+  </thead>
+  <tbody>
+  <!-- 数据将动态地插入到这里 -->
+  </tbody>
+</table>
+
+<script>
+  async function submitForm() {
+    const did = document.getElementById('did').value;
+    const pid = document.getElementById('pid').value;
+    const name = document.getElementById('name').value;
+    const order = document.getElementById('order').value;
+
+    const data = {
+      did: did,
+      pid: pid,
+      name: name,
+      order: order
+    };
+
+    try {
+      const response = await fetch('/admin/dept_map', { // 确保 URL 正确
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      const tableBody = document.querySelector('#responseTable tbody');
+      tableBody.innerHTML = ''; // 清空之前的数据
+
+      result.forEach(item => {
+        let row = tableBody.insertRow();
+        let thirdNameCell = row.insertCell();
+        let dbNameCell = row.insertCell();
+
+        thirdNameCell.textContent = item.third_name;
+        dbNameCell.textContent = item.db_name;
+      });
+
+    } catch (error) {
+      document.getElementById('responseTable').innerHTML = `<p>Error: ${error}</p>`;
+    }
+  }
+</script>
+
+</body>
+</html>

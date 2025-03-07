@@ -1,0 +1,279 @@
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+<!--  <title>用户同步配置</title>-->
+<!--  <style>-->
+<!--    table {-->
+<!--      border-collapse: collapse;-->
+<!--      width: 100%;-->
+<!--    }-->
+<!--    th, td {-->
+<!--      border: 1px solid black;-->
+<!--      padding: 8px;-->
+<!--      text-align: left;-->
+<!--    }-->
+<!--    th {-->
+<!--      background-color: #f2f2f2;-->
+<!--    }-->
+<!--  </style>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<h1>用户同步字段配置</h1>-->
+
+<!--<form id="userForm">-->
+<!--  <label for="uid">用户唯一id:</label><br>-->
+<!--  <input type="text" id="uid" name="uid" required><br><br>-->
+
+<!--  <label for="did">用户部门id:</label><br>-->
+<!--  <input type="text" id="did" name="did" required><br><br>-->
+
+<!--  <label for="name">用户名称:</label><br>-->
+<!--  <input type="text" id="name" name="name" required><br><br>-->
+
+<!--  <label for="order">排序 (Optional):</label><br>-->
+<!--  <input type="text" id="order" name="order"><br><br>-->
+
+<!--  <button type="button" onclick="submitForm()">提交</button>-->
+<!--</form>-->
+
+<!--<h2>当前字段映射:</h2>-->
+<!--<table id="responseTable">-->
+<!--  <thead>-->
+<!--  <tr>-->
+<!--    <th>Third Name</th>-->
+<!--    <th>DB Name</th>-->
+<!--  </tr>-->
+<!--  </thead>-->
+<!--  <tbody>-->
+<!--  &lt;!&ndash; 数据将动态地插入到这里 &ndash;&gt;-->
+<!--  </tbody>-->
+<!--</table>-->
+
+<!--<script>-->
+<!--  async function submitForm() {-->
+<!--    const did = document.getElementById('did').value;-->
+<!--    const name = document.getElementById('name').value;-->
+<!--    const order = document.getElementById('order').value;-->
+<!--    const uid = document.getElementById('uid').value;-->
+
+<!--    const data = {-->
+<!--      uid: uid,-->
+<!--      did: did,-->
+<!--      name: name,-->
+<!--      order: order-->
+<!--    };-->
+
+<!--    try {-->
+<!--      const response = await fetch('/admin/user_map', { // 确保 URL 正确-->
+<!--        method: 'POST',-->
+<!--        headers: {-->
+<!--          'Content-Type': 'application/json'-->
+<!--        },-->
+<!--        body: JSON.stringify(data)-->
+<!--      });-->
+
+<!--      if (!response.ok) {-->
+<!--        throw new Error(`HTTP error! status: ${response.status}`);-->
+<!--      }-->
+
+<!--      const result = await response.json();-->
+
+<!--      const tableBody = document.querySelector('#responseTable tbody');-->
+<!--      tableBody.innerHTML = ''; // 清空之前的数据-->
+
+<!--      result.forEach(item => {-->
+<!--        let row = tableBody.insertRow();-->
+<!--        let thirdNameCell = row.insertCell();-->
+<!--        let dbNameCell = row.insertCell();-->
+
+<!--        thirdNameCell.textContent = item.third_name;-->
+<!--        dbNameCell.textContent = item.db_name;-->
+<!--      });-->
+
+<!--    } catch (error) {-->
+<!--      document.getElementById('responseTable').innerHTML = `<p>Error: ${error}</p>`;-->
+<!--    }-->
+<!--  }-->
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>用户同步配置</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    label {
+      margin-bottom: 2px; /* 减小 label 下方的 margin */
+    }
+    input {
+      margin-top: 2px; /* 减小 input 上方的 margin */
+    }
+  </style>
+</head>
+<body>
+<form id="userForm" style="display: grid; grid-template-columns: repeat(4, 1fr); grid-gap: 10px;">
+  <div style="grid-column: span 4;">
+    <h1>用户同步字段配置</h1>
+  </div>
+
+  <label for="uid">用户唯一id:</label>
+  <input type="text" id="uid" name="uid" required>
+
+  <label for="account">用户账号:</label>
+  <input type="text" id="account" name="account" required>
+
+  <label for="name">用户名称:</label>
+  <input type="text" id="name" name="name" required>
+
+  <label for="def_did">用户部门id:</label>
+  <input type="text" id="def_did" name="def_did" required>
+
+  <label for="password">密码:</label>
+  <input type="password" id="password" name="password">
+
+  <label for="avatar">头像:</label>
+  <input type="text" id="avatar" name="avatar">
+
+  <label for="email">邮箱:</label>
+  <input type="email" id="email" name="email">
+
+  <label for="gender">性别:</label>
+  <input type="text" id="gender" name="gender">
+
+  <label for="title">职称:</label>
+  <input type="text" id="title" name="title">
+
+  <label for="work_place">工作地点:</label>
+  <input type="text" id="work_place" name="work_place">
+
+  <label for="leader">负责人:</label>
+  <input type="text" id="leader" name="leader">
+
+  <label for="employer">雇主:</label>
+  <input type="text" id="employer" name="employer">
+
+  <label for="employment_status">雇佣状态:</label>
+  <input type="text" id="employment_status" name="employment_status">
+
+  <label for="employment_type">雇佣类型:</label>
+  <input type="text" id="employment_type" name="employment_type">
+
+  <label for="phone">电话:</label>
+  <input type="text" id="phone" name="phone">
+
+  <label for="telephone">座机:</label>
+  <input type="text" id="telephone" name="telephone">
+
+  <label for="def_did_order">排序 (Optional):</label>
+  <input type="text" id="def_did_order" name="def_did_order">
+
+  <div style="grid-column: span 4;">
+    <button type="button" onclick="submitForm()">提交</button>
+  </div>
+</form>
+
+<h2>当前字段映射:</h2>
+<table id="responseTable">
+  <thead>
+  <tr>
+    <th>Third Name</th>
+    <th>DB Name</th>
+  </tr>
+  </thead>
+  <tbody>
+  <!-- 数据将动态地插入到这里 -->
+  </tbody>
+</table>
+
+<script>
+  async function submitForm() {
+    const uid = document.getElementById('uid').value;
+    const name = document.getElementById('name').value;
+    const def_did = document.getElementById('def_did').value;
+    const def_did_order = document.getElementById('def_did_order').value;
+    const account = document.getElementById('account').value;
+    const password = document.getElementById('password').value;
+    const avatar = document.getElementById('avatar').value;
+    const email = document.getElementById('email').value;
+    const gender = document.getElementById('gender').value;
+    const title = document.getElementById('title').value;
+    const work_place = document.getElementById('work_place').value;
+    const leader = document.getElementById('leader').value;
+    const employer = document.getElementById('employer').value;
+    const employment_status = document.getElementById('employment_status').value;
+    const employment_type = document.getElementById('employment_type').value;
+    const phone = document.getElementById('phone').value;
+    const telephone = document.getElementById('telephone').value;
+
+
+    const data = {
+      uid: uid,
+      name: name,
+      def_did: def_did,
+      def_did_order: def_did_order,
+      account: account,
+      password: password,
+      avatar: avatar,
+      email: email,
+      gender: gender,
+      title: title,
+      work_place: work_place,
+      leader: leader,
+      employer: employer,
+      employment_status: employment_status,
+      employment_type: employment_type,
+      phone: phone,
+      telephone: telephone
+    };
+
+    try {
+      const response = await fetch('/admin/user_map', { // 确保 URL 正确
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      const tableBody = document.querySelector('#responseTable tbody');
+      tableBody.innerHTML = ''; // 清空之前的数据
+
+      result.forEach(item => {
+        let row = tableBody.insertRow();
+        let thirdNameCell = row.insertCell();
+        let dbNameCell = row.insertCell();
+
+        thirdNameCell.textContent = item.third_name;
+        dbNameCell.textContent = item.db_name;
+      });
+
+    } catch (error) {
+      document.getElementById('responseTable').innerHTML = `<p>Error: ${error}</p>`;
+    }
+  }
+</script>
+
+</body>
+</html>
