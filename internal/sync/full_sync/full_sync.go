@@ -11,7 +11,7 @@ import (
 )
 
 type FullSync struct {
-	thirdData third_data.ThirdData
+	thirdData third_data.CommonThirdData
 }
 
 const (
@@ -26,7 +26,7 @@ func (f *FullSync) Order(order int) int {
 	return order
 }
 func (f *FullSync) SyncDept(operationID, taskID string) error {
-	list, err := f.thirdData.GetThirdDeptList()
+	list, err := f.thirdData.GetAllDept(operationID)
 	if err != nil {
 		log.Error(operationID, "failed to get third dept list", err)
 		return err
@@ -67,7 +67,7 @@ func (f *FullSync) SyncDept(operationID, taskID string) error {
 	return nil
 }
 func (f *FullSync) SyncUser(operationID, taskID string) error {
-	list, err := f.thirdData.GetThirdUserList()
+	list, err := f.thirdData.GetAllUser(operationID)
 	if err != nil {
 		log.Error(operationID, "failed to get third user list", err.Error())
 		return err

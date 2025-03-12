@@ -17,6 +17,34 @@ import (
 	"time"
 )
 
+func (c *HttpClient) Do(operationID, method, apiUrl, contentType string, req map[string]interface{}, header map[string]string) ([]byte, error) {
+	body, err := handleBody(operationID, contentType, req)
+	if err != nil {
+		return nil, err
+	}
+	request, err := http.NewRequest(method, apiUrl, body)
+	if err != nil {
+		return nil, err
+	}
+	if contentType != "" {
+		request.Header.Set("Content-Type", contentType)
+	}
+	for k, v := range header {
+		request.Header.Set(k, v)
+	}
+	client := http.Client{Timeout: 5 * time.Second}
+	httpResponse, err := client.Do(request)
+	if err != nil {
+		log.Error(operationID, "http client do failed", err.Error(), apiUrl)
+		return nil, err
+	}
+	result, err := io.ReadAll(httpResponse.Body)
+	if httpResponse.StatusCode != 200 {
+		log.Error(operationID, "http client status code failed", apiUrl, string(result))
+		return nil, utils.Wrap(errors.New(httpResponse.Status), "status code failed "+apiUrl+string(result))
+	}
+	return result, nil
+}
 func (c *HttpClient) Common(operationID, method, apiUrl, contentType string, req map[string]interface{}, resp interface{}, header map[string]string) error {
 	body, err := handleBody(operationID, contentType, req)
 	if err != nil {
@@ -26,7 +54,9 @@ func (c *HttpClient) Common(operationID, method, apiUrl, contentType string, req
 	if err != nil {
 		return err
 	}
-	request.Header.Set("Content-Type", contentType)
+	if contentType != "" {
+		request.Header.Set("Content-Type", contentType)
+	}
 	for k, v := range header {
 		request.Header.Set(k, v)
 	}
@@ -58,6 +88,7 @@ func handleBody(operationID, contentType string, req map[string]interface{}) (io
 			}
 			return strings.NewReader(string(jsonStr)), nil
 		}
+		return nil, nil
 	case ContentType_form_urlencoded:
 		values := url.Values{}
 		for k, v := range req {

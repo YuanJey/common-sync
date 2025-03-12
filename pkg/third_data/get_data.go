@@ -4,6 +4,7 @@ import (
 	"common-sync/pkg/http_client"
 	"errors"
 	"fmt"
+	"github.com/avast/retry-go/v4"
 )
 
 type GetThirdDataForApi interface {
@@ -12,41 +13,50 @@ type GetThirdDataForApi interface {
 	GetAllUser(operationID string) ([]ThirdUser, error)
 	GetUserByPage(operationID string, page int, pageSize int) ([]ThirdUser, error)
 }
-type Config struct {
-	adders map[int]addrInfo
+type APIConfig struct {
+	Adders map[int]AddrInfo
 }
-type addrInfo struct {
-	Url         string
-	Method      string
-	contentType string
-	Headers     map[string]string
-	Type        int
-	Req         map[string]interface{}
+
+func (a *APIConfig) AddAddrInfo(addr AddrInfo) {
+	a.Adders[addr.Type] = addr
 }
+
 type CommonThirdData struct {
 	httpClient *http_client.HttpClient
-	config     Config
+	APIConfig  APIConfig
+	auth       *APIAuth
+}
+type GetAllDeptResp struct {
+	result []ThirdDept
 }
 
 func (c *CommonThirdData) GetAllDept(operationID string) ([]ThirdDept, error) {
-	if addr, ok := c.config.adders[http_client.Api_Data_All]; ok {
-		var result []ThirdDept
-		err := c.httpClient.Common(operationID, addr.Method, addr.Url, addr.contentType, addr.Req, &result, addr.Headers)
-		if err != nil {
-			return nil, err
+	result := GetAllDeptResp{}
+	//var data []byte
+	err := retry.Do(func() error {
+		if addr, ok := c.APIConfig.Adders[http_client.Api_Data_All]; ok {
+			if addr.Auth {
+				c.auth.SetToken(operationID)
+				addr.SetAuthToken(c.auth.Token)
+			}
+			err := c.httpClient.Common(operationID, addr.Method, addr.Url, addr.ContentType, addr.Req, &result, addr.Headers)
+			if err != nil {
+				return err
+			}
+			return nil
 		}
-		return result, nil
-	}
-	return nil, errors.New("not found api config")
+		return errors.New("not found api APIConfig")
+	}, retry.Attempts(3))
+	return result.result, err
 }
 
 func (c *CommonThirdData) GetDeptByPage(operationID string, page int, pageSize int) ([]ThirdDept, error) {
-	if addr, ok := c.config.adders[http_client.Api_Data_Page]; ok {
+	if addr, ok := c.APIConfig.Adders[http_client.Api_Data_Page]; ok {
 		var all []ThirdDept
 		var i = 1
 		for {
 			var result []ThirdDept
-			err := c.httpClient.Common(operationID, addr.Method, fmt.Sprintln(addr.Url, i), addr.contentType, addr.Req, &result, addr.Headers)
+			err := c.httpClient.Common(operationID, addr.Method, fmt.Sprintln(addr.Url, i), addr.ContentType, addr.Req, &result, addr.Headers)
 			if err != nil {
 				return nil, err
 			}
@@ -60,7 +70,7 @@ func (c *CommonThirdData) GetDeptByPage(operationID string, page int, pageSize i
 		}
 		return all, nil
 	}
-	return nil, errors.New("not found api config")
+	return nil, errors.New("not found api APIConfig")
 }
 
 func (c *CommonThirdData) GetAllUser(operationID string) ([]ThirdUser, error) {
@@ -76,6 +86,6 @@ func (c *CommonThirdData) GetUserByPage(operationID string, page int, pageSize i
 func NewCommonThirdData() *CommonThirdData {
 	return &CommonThirdData{
 		httpClient: &http_client.HttpClient{},
-		config:     Config{adders: make(map[int]addrInfo)},
+		APIConfig:  APIConfig{Adders: make(map[int]AddrInfo)},
 	}
 }

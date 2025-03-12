@@ -1,8 +1,8 @@
 package main
 
 import (
-	"common-sync/pkg/config"
-	"common-sync/pkg/utils"
+	"common-sync/pkg/http_client"
+	"common-sync/pkg/third_data"
 	"encoding/json"
 	"fmt"
 	"github.com/YuanJey/commonHttpClient/pkg/params"
@@ -14,21 +14,33 @@ import (
 func main() {
 	//save()
 	//resp()
-	config.ServerConfig.DeptFields = []config.DeptField{
-		{
-			DBName:    "Name",
-			ThirdName: "name",
-		},
-		{
-			DBName:    "Order",
-			ThirdName: "age",
-		},
-	}
-	str := "{\"data\":[{\"name\":\"aaa\",\"age\":18},{\"name\":\"bbb\",\"age\":19}]}"
-	data := utils.HandleOrgData([]byte(str))
-	fmt.Println(data)
+	api()
 }
-
+func api() {
+	data := third_data.NewCommonThirdData()
+	apiConfig := third_data.APIConfig{
+		Adders: make(map[int]third_data.AddrInfo),
+	}
+	apiConfig.Adders[http_client.Get_Dept_All] = third_data.AddrInfo{
+		Url:         "https://api-at.saicmotortest.com/idm/v1/bim/getAppToken?apikey=nFrj0EO4zZOm70DhMrKvUieO5JReCeZp",
+		Method:      "POST",
+		Headers:     make(map[string]string),
+		Type:        http_client.Api_Data_All, //全量获取
+		Req:         make(map[string]interface{}),
+		Auth:        false,
+		TokenName:   "",
+		ContentType: "application/x-www-form-urlencoded",
+	}
+	apiConfig.Adders[http_client.Get_Dept_All].Req["systemCode"] = "HHAO"
+	apiConfig.Adders[http_client.Get_Dept_All].Req["integrationKey"] = "HHAOsaicP@ssw13rd"
+	apiConfig.Adders[http_client.Get_Dept_All].Req["force"] = "true"
+	data.APIConfig = apiConfig
+	dept, err := data.GetAllDept("1")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(dept)
+}
 func resp() {
 	str := "{\"data\":[{\"name\":\"aaa\",\"age\":18},{\"name\":\"bbb\",\"age\":19}]}"
 	//str := "{\"name\":\"aaa\",\"age\":18}"

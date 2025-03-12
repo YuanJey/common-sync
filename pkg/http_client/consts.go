@@ -10,3 +10,9 @@ const (
 	Api_Data_All  = 0
 	Api_Data_Page = 1
 )
+const (
+	Get_Dept_All  = 0
+	Get_Dept_Page = 1
+	Get_User_All  = 2
+	Get_User_Page = 3
+)

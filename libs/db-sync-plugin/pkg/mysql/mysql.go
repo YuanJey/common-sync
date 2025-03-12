@@ -93,7 +93,7 @@ func init() {
 }
 func decryptByAes(enData, key string) (string, error) {
 	// 应用SK
-	//key := config.Config.Env.SK
+	//key := config.APIConfig.Env.SK
 	h := md5.New()
 	h.Write([]byte(key))
 	akey := hex.EncodeToString(h.Sum(nil))

@@ -10,6 +10,11 @@ import (
 
 var ServerConfig Config
 
+const (
+	ApiConfigKey_Dept = "deptData"
+	ApiConfigKey_User = "userData"
+)
+
 type Config struct {
 	WPS struct {
 		Addr       string `yaml:"addr"`
@@ -25,7 +30,7 @@ type Config struct {
 	SyncOptions struct {
 		Sort int `yaml:"sort" json:"sort"`
 	} `yaml:"syncOptions"`
-	ApiConfig params.RequestConfig
+	ApiConfig map[string]params.RequestConfig `yaml:"apiConfig" json:"apiConfig"`
 }
 
 func (c *Config) Save(operationID, fileName string) error {
@@ -77,5 +82,4 @@ type UserField struct {
 
 func init() {
 	config.UnmarshalConfig(&ServerConfig, "config.yaml")
-	ymal.Marshal(ServerConfig)
 }

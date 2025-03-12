@@ -7,6 +7,7 @@ require (
 	github.com/YuanJey/go-log v1.0.4
 	github.com/YuanJey/goconf v1.0.1
 	github.com/YuanJey/goutils2 v1.0.6
+	github.com/avast/retry-go/v4 v4.6.1
 	github.com/gin-gonic/gin v1.10.0
 	gopkg.in/yaml.v3 v3.0.1
 	pl.ghgame.cn/gitea/yuanjie/db-sync-plugin v1.3.0
